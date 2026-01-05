@@ -18,19 +18,21 @@ export default function AnimeListItem({ id, title, href }: AnimeListItemProps) {
     let isMounted = true;
     
     async function fetchDetail() {
-      try {
-        const response = await getAnimeDetail(id);
-        if (isMounted && response?.data) {
-          setDetail(response.data);
-        }
-      } catch (error) {
-        console.error(`Failed to fetch detail for ${id}`, error);
-      } finally {
-        if (isMounted) {
-          setLoading(false);
-        }
-      }
+  try {
+    const detail = await getAnimeDetail(id);
+
+    if (isMounted && detail) {
+      setDetail(detail);
     }
+  } catch (error) {
+    console.error(`Failed to fetch detail for ${id}`, error);
+  } finally {
+    if (isMounted) {
+      setLoading(false);
+    }
+  }
+}
+
 
     if (id) {
       fetchDetail();

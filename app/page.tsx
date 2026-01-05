@@ -19,16 +19,18 @@ export default async function Home() {
   const shuffledLatest = [...allLatest].sort(() => 0.5 - Math.random());
   const heroCandidates = shuffledLatest.slice(0, 4);
   
-  const heroDetailsPromises = heroCandidates.map((anime) => 
-    getAnimeDetail(anime.animeId)
-  );
-  
-  // We handle potential failures in detail fetch gracefully (though Promise.all will fail if one fails, for now assume API is stable or let it error for error boundary)
-  const heroDetailsResponses = await Promise.all(heroDetailsPromises);
-  const heroAnimeList = heroDetailsResponses.map((res, index) => ({
-  ...res.data,
-  animeId: heroCandidates[index].animeId, // Mengambil ID dari list awal
-}));
+  const heroDetailsPromises = heroCandidates.map(async (anime) => {
+  const detail = await getAnimeDetail(anime.animeId);
+  if (!detail) return null;
+
+  return {
+    ...detail,
+    animeId: anime.animeId,
+  };
+});
+
+const heroAnimeList = (await Promise.all(heroDetailsPromises))
+  .filter((item): item is NonNullable<typeof item> => item !== null);
 
   // Process Latest Updates: Top 3 from page 1
   const latestUpdatesList = allLatest.slice(0, 3);
