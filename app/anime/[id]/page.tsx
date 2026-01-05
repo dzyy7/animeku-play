@@ -7,11 +7,11 @@ import ReleaseSchedule from "@/app/components/ReleaseSchedule";
 import { getAnimeDetail, getBatch, getSchedule } from "@/lib/api";
 
 interface PageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 export default async function AnimeDetailPage({ params }: PageProps) {
-  const { id } = params;
+  const { id } = await params;
 
   const [anime, scheduleRes] = await Promise.all([
     getAnimeDetail(id), // ← SUDAH AnimeDetail
