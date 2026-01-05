@@ -6,10 +6,12 @@ export default function Footer() {
       <div className="max-w-[1600px] mx-auto flex flex-col md:flex-row justify-between items-start gap-8">
         <div className="flex flex-col gap-4">
           <Link className="flex items-center gap-3 text-white" href="/">
-            <div className="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
-              <span className="material-symbols-outlined">play_arrow</span>
-            </div>
-            <h2 className="text-xl font-bold tracking-tight">AniKuPlay</h2>
+              <img 
+                  src="/favicon.ico" 
+                  alt="Logo" 
+                  className="w-12 h-12 "
+                />
+                <h2 className="text-xl font-bold tracking-tight">AniKuPlay</h2>
           </Link>
           <p className="text-sm text-gray-400 max-w-xs">
             The best place to watch anime online for free. High quality, fast
@@ -34,6 +36,9 @@ export default function Footer() {
             <Link className="hover:text-primary" href="https://nyawer.co/AlGhazam">
               Saweria
             </Link>
+            <a className="hover:text-primary" href="https://dzaky-porto.vercel.app">
+              Admin
+            </a>
           </div>
         </div>
       </div>
