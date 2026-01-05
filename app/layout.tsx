@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     creator: "@anikuplay",
   },
   verification: {
-    google: "3bjx3oHvr6sGYmLB2DcEnDSPqneZY_duoyuQwQ63bjx3oHvr6sGYmLB2DcEnDSPqneZY_duoyuQwQ6-fiU",
+    google: "3bjx3oHvr6sGYmLB2DcEnDSPqneZY_duoyuQwQ6-fiU",
   },
   alternates: {
     canonical: "/",
