@@ -12,7 +12,7 @@ export default function CompletedMasterpieces({ animeList }: CompletedMasterpiec
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white flex items-center gap-2">
           <span className="w-1 h-6 bg-primary rounded-full" />
-          Completed Masterpieces
+          Completed
         </h2>
         
       </div>
