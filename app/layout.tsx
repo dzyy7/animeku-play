@@ -23,7 +23,8 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-background-dark font-display text-white selection:bg-primary selection:text-white overflow-x-hidden">
+      <body className="bg-background-dark font-display text-white selection:bg-primary selection:text-white overflow-x-hidden" suppressHydrationWarning>
+        
         {children}
       </body>
     </html>
