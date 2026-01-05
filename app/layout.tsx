@@ -61,7 +61,7 @@ export const metadata: Metadata = {
     creator: "@anikuplay",
   },
   verification: {
-    google: "your-google-verification-code-here",
+    google: "3bjx3oHvr6sGYmLB2DcEnDSPqneZY_duoyuQwQ6",
   },
   alternates: {
     canonical: "/",
