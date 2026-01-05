@@ -5,16 +5,42 @@ import AnimeDetailHero from "@/app/components/AnimeDetailHero";
 import EpisodeList from "@/app/components/EpisodeList";
 import ReleaseSchedule from "@/app/components/ReleaseSchedule";
 import { getAnimeDetail, getBatch, getSchedule } from "@/lib/api";
+import { Metadata } from "next";
+import { generateAnimeMetadata } from "@/lib/metadata";
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  
+  try {
+    const anime = await getAnimeDetail(id);
+    
+    return generateAnimeMetadata({
+      title: anime.title,
+      synopsis: anime.synopsis.paragraphs.join(" "),
+      poster: anime.poster,
+      genres: anime.genreList.map((g) => g.title),
+      score: anime.score,
+      episodes: anime.episodes,
+      status: anime.status,
+      animeId: id,
+    });
+  } catch (error) {
+    return {
+      title: "Anime Not Found",
+      description: "The requested anime could not be found.",
+    };
+  }
 }
 
 export default async function AnimeDetailPage({ params }: PageProps) {
   const { id } = await params;
 
   const [anime, scheduleRes] = await Promise.all([
-    getAnimeDetail(id), // ← SUDAH AnimeDetail
+    getAnimeDetail(id),
     getSchedule(),
   ]);
 
@@ -44,27 +70,49 @@ export default async function AnimeDetailPage({ params }: PageProps) {
     batchData,
   };
 
-  return (
-    <div className="min-h-screen flex flex-col bg-background-dark">
-      <Header />
-      <main className="flex-grow flex justify-center w-full">
-        <div className="w-full max-w-[1280px] px-4 md:px-10 py-6 md:py-8 flex flex-col gap-8">
-          <Breadcrumb animeTitle={anime.title} />
-          <AnimeDetailHero anime={heroData} />
+  // JSON-LD Structured Data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "TVSeries",
+    name: anime.title,
+    description: anime.synopsis.paragraphs.join(" "),
+    image: anime.poster,
+    genre: anime.genreList.map((g) => g.title),
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: anime.score,
+      bestRating: "10",
+    },
+    numberOfEpisodes: anime.episodes,
+  };
 
-          <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-8 mt-6">
-            <EpisodeList
-              animeId={id}
-              episodes={anime.episodeList}
-              recommended={anime.recommendedAnimeList}
-            />
-            <div className="flex flex-col gap-6">
-              <ReleaseSchedule scheduleData={scheduleRes.data} />
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <div className="min-h-screen flex flex-col bg-background-dark">
+        <Header />
+        <main className="flex-grow flex justify-center w-full">
+          <div className="w-full max-w-[1280px] px-4 md:px-10 py-6 md:py-8 flex flex-col gap-8">
+            <Breadcrumb animeTitle={anime.title} />
+            <AnimeDetailHero anime={heroData} />
+
+            <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-8 mt-6">
+              <EpisodeList
+                animeId={id}
+                episodes={anime.episodeList}
+                recommended={anime.recommendedAnimeList}
+              />
+              <div className="flex flex-col gap-6">
+                <ReleaseSchedule scheduleData={scheduleRes.data} />
+              </div>
             </div>
           </div>
-        </div>
-      </main>
-      <Footer />
-    </div>
+        </main>
+        <Footer />
+      </div>
+    </>
   );
 }
