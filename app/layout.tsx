@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "AnimeKuPlay - Homepage",
+  title: "AniKuPlay",
   description: "The best place to watch anime online for free. High quality, fast streaming, and minimal ads.",
 };
 

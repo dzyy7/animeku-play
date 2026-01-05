@@ -1,32 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { AnimeItem, Episode } from "@/lib/api";
 import Link from "next/link";
-
-interface Episode {
-  number: number;
-  title: string;
-  thumbnail: string;
-  date: string;
-  duration: string;
-  hasSub: boolean;
-  hasDub: boolean;
-  quality?: string;
-  isCurrentlyPlaying?: boolean;
-}
+import { useState } from "react";
+import AnimeCard from "./AnimeCard";
 
 interface EpisodeListProps {
   animeId: string;
   episodes: Episode[];
+  recommended: AnimeItem[];
 }
 
-export default function EpisodeList({ animeId, episodes }: EpisodeListProps) {
-  const [activeTab, setActiveTab] = useState("episodes");
+export default function EpisodeList({ animeId, episodes, recommended }: EpisodeListProps) {
+  const [activeTab, setActiveTab] = useState<"episodes" | "comments" | "related">(
+    "episodes"
+  );
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredEpisodes = episodes.filter((ep) =>
+    ep.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
     <div className="flex flex-col gap-6">
       {/* Tabs */}
-      <div className="flex items-center border-b border-[#1e293b]">
+      <div className="flex items-center gap-2 border-b border-[#1e293b]">
         <button
           className={`relative px-6 py-3 font-medium text-base transition-colors ${
             activeTab === "episodes"
@@ -35,24 +33,12 @@ export default function EpisodeList({ animeId, episodes }: EpisodeListProps) {
           }`}
           onClick={() => setActiveTab("episodes")}
         >
-          Episode List
+          Episodes ({episodes.length})
           {activeTab === "episodes" && (
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
           )}
         </button>
-        <button
-          className={`relative px-6 py-3 font-medium text-base transition-colors ${
-            activeTab === "comments"
-              ? "text-white"
-              : "text-[#94a3b8] hover:text-white"
-          }`}
-          onClick={() => setActiveTab("comments")}
-        >
-          Comments (124)
-          {activeTab === "comments" && (
-            <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
-          )}
-        </button>
+        
         <button
           className={`relative px-6 py-3 font-medium text-base transition-colors ${
             activeTab === "related"
@@ -61,108 +47,87 @@ export default function EpisodeList({ animeId, episodes }: EpisodeListProps) {
           }`}
           onClick={() => setActiveTab("related")}
         >
-          Related
+          Related Anime
           {activeTab === "related" && (
             <div className="absolute bottom-0 left-0 w-full h-0.5 bg-primary" />
           )}
         </button>
       </div>
 
-      {/* Episode List Content */}
+      {/* Episode List */}
       {activeTab === "episodes" && (
-        <div className="flex flex-col gap-1">
-          {/* Header */}
-          <div className="flex items-center justify-between px-4 py-2 text-xs uppercase tracking-wider text-[#94a3b8] font-semibold">
-            <span className="flex-1">Episode Title</span>
-            <span className="w-32 text-center hidden md:block">Date</span>
-            <span className="w-24 text-right hidden md:block">Duration</span>
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <h3 className="text-white font-bold text-lg">All Episodes</h3>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search episode..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="bg-[#1e293b] border border-[#1e293b] text-sm text-white rounded-lg px-4 py-2 pl-9 focus:outline-none focus:border-primary w-48 transition-colors"
+              />
+              <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[#94a3b8] text-lg">
+                search
+              </span>
+            </div>
           </div>
 
-          {/* Episodes */}
-          {episodes.map((episode) => (
-            <Link
-              key={episode.number}
-              href={`/anime/${animeId}/watch/${episode.number}`}
-              className={`group flex items-center gap-4 ${
-                episode.isCurrentlyPlaying ? "bg-[#1e293b]" : "bg-transparent"
-              } hover:bg-[#334155] p-3 rounded-lg border border-transparent hover:border-primary/30 transition-all cursor-pointer`}
-            >
-              <div className="relative w-28 aspect-video rounded overflow-hidden bg-black">
-                <div
-                  className="absolute inset-0 bg-cover bg-center opacity-80 group-hover:opacity-100 transition-opacity"
-                  style={{ backgroundImage: `url("${episode.thumbnail}")` }}
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all">
-                  <span className="material-symbols-outlined text-white text-2xl drop-shadow-lg group-hover:scale-110 transition-transform">
-                    play_circle
-                  </span>
-                </div>
-              </div>
-              <div className="flex flex-1 flex-col gap-1">
-                <h3 className="text-white text-sm md:text-base font-medium group-hover:text-primary transition-colors">
-                  <span
-                    className={`${
-                      episode.isCurrentlyPlaying
-                        ? "text-primary"
-                        : "text-[#94a3b8]"
-                    } font-bold mr-2`}
-                  >
-                    EP {episode.number.toString().padStart(2, "0")}
-                  </span>
-                  {episode.title}
-                </h3>
-                <div className="flex items-center gap-2">
-                  {episode.hasSub && (
-                    <span className="text-[#94a3b8] text-xs">Sub</span>
-                  )}
-                  {episode.hasSub && episode.hasDub && (
-                    <span className="w-1 h-1 rounded-full bg-[#94a3b8]" />
-                  )}
-                  {episode.hasDub && (
-                    <span className="text-[#94a3b8] text-xs">Dub</span>
-                  )}
-                  {episode.quality && (
-                    <>
-                      <span className="w-1 h-1 rounded-full bg-[#94a3b8]" />
-                      <span className="text-[#94a3b8] text-xs">
-                        {episode.quality}
-                      </span>
-                    </>
-                  )}
-                </div>
-              </div>
-              <span className="hidden md:block w-32 text-center text-[#94a3b8] text-sm">
-                {episode.date}
-              </span>
-              <span className="hidden md:block w-24 text-right text-[#94a3b8] text-sm">
-                {episode.duration}
-              </span>
-            </Link>
-          ))}
+          <div className="flex flex-col rounded-xl overflow-hidden bg-[#151d2a] border border-[#1e293b]">
+            <div className="flex items-center justify-between px-4 py-2 text-xs uppercase tracking-wider text-[#94a3b8] font-semibold bg-[#111827]">
+              <span className="flex-1">Episode Title</span>
+              <span className="w-32 text-center hidden md:block">Date</span>
+            </div>
 
-          {/* Show More Button */}
-          <div className="mt-4 flex justify-center">
-            <button className="text-[#94a3b8] hover:text-white text-sm font-medium flex items-center gap-1 transition-colors">
-              Show more episodes
-              <span className="material-symbols-outlined text-base">
-                expand_more
-              </span>
-            </button>
+            <div className="flex flex-col">
+              {filteredEpisodes.map((episode) => (
+                <Link
+                  key={episode.episodeId}
+                  href={`/anime/${animeId}/${episode.episodeId}`}
+                  className="flex items-center justify-between px-4 py-3 hover:bg-[#1e293b]/50 transition-colors border-b border-[#1e293b] last:border-0 group"
+                >
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="size-8 rounded-full bg-[#1e293b] flex items-center justify-center text-[#94a3b8] text-xs font-bold group-hover:bg-primary group-hover:text-white transition-colors flex-shrink-0">
+                      {episode.eps}
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <h4 className="text-sm font-medium text-gray-200 group-hover:text-primary transition-colors line-clamp-1">
+                        {episode.title}
+                      </h4>
+                    </div>
+                  </div>
+                  <span className="hidden md:block w-32 text-center text-[#94a3b8] text-sm whitespace-nowrap">
+                  {episode.date}
+                  </span>
+                </Link>
+              ))}
+              {filteredEpisodes.length === 0 && (
+                <div className="p-8 text-center text-[#94a3b8]">
+                  No episodes found.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      {/* Comments Tab Placeholder */}
-      {activeTab === "comments" && (
-        <div className="text-[#94a3b8] text-center py-8">
-          Comments section coming soon...
-        </div>
-      )}
-
-      {/* Related Tab Placeholder */}
+      {/* Related Tab */}
       {activeTab === "related" && (
-        <div className="text-[#94a3b8] text-center py-8">
-          Related anime coming soon...
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {recommended.map((anime) => (
+            <AnimeCard
+              key={anime.animeId}
+              id={anime.animeId}
+              image={anime.poster}
+              title={anime.title}
+              variant="poster"
+            />
+          ))}
+          {recommended.length === 0 && (
+            <div className="col-span-full p-8 text-center text-[#94a3b8]">
+              No related anime found.
+            </div>
+          )}
         </div>
       )}
     </div>

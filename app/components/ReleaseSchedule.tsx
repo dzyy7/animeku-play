@@ -1,32 +1,36 @@
 "use client";
 
+import { ScheduleDay } from "@/lib/api";
+import Link from "next/link";
 import { useState } from "react";
 
-interface ScheduleItem {
-  time: string;
-  timezone: string;
-  poster: string;
-  title: string;
-  episode: string;
-  isAired?: boolean;
-}
-
 interface ReleaseScheduleProps {
-  scheduleItems: ScheduleItem[];
+  scheduleData: ScheduleDay[];
 }
 
-const days = ["MON", "TUE", "WED", "THU", "FRI", "SAT"];
+const days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu", "Minggu"];
+const dayMap: Record<string, string> = {
+  "Senin": "MON",
+  "Selasa": "TUE",
+  "Rabu": "WED",
+  "Kamis": "THU",
+  "Jumat": "FRI",
+  "Sabtu": "SAT",
+  "Minggu": "SUN"
+};
 
-export default function ReleaseSchedule({ scheduleItems }: ReleaseScheduleProps) {
-  const [activeDay, setActiveDay] = useState("WED");
+export default function ReleaseSchedule({ scheduleData }: ReleaseScheduleProps) {
+  // Determine current day to set as active default
+  const today = new Date().toLocaleDateString("id-ID", { weekday: "long" });
+  const [activeDay, setActiveDay] = useState(today);
+
+  // Find the selected day's data
+  const currentDayData = scheduleData.find(d => d.day === activeDay)?.anime_list || [];
 
   return (
     <div className="bg-[#1e293b] rounded-xl p-5 border border-[#1e293b]">
       <div className="flex items-center justify-between mb-6">
         <h3 className="text-white text-lg font-bold">Release Schedule</h3>
-        <button className="text-primary text-xs font-bold uppercase hover:text-white transition-colors">
-          View Full
-        </button>
       </div>
 
       {/* Day Selector */}
@@ -41,34 +45,21 @@ export default function ReleaseSchedule({ scheduleItems }: ReleaseScheduleProps)
             }`}
             onClick={() => setActiveDay(day)}
           >
-            {day}
+            {dayMap[day]}
           </button>
         ))}
       </div>
 
-      {/* Schedule Items */}
-      <div className="flex flex-col gap-3">
-        {scheduleItems.map((item, index) => (
-          <div
+      {/* Schedule Items - Scrollable Box */}
+      <div className="flex flex-col gap-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+        {currentDayData.map((item, index) => (
+          <Link
+            href={item.url}
             key={index}
             className="flex gap-3 group cursor-pointer hover:bg-[#1e293b]/50 p-2 rounded-lg transition-colors -mx-2"
           >
-            <div className="w-12 text-center pt-1">
-              <span
-                className={`block font-bold text-sm ${
-                  item.isAired ? "text-[#94a3b8]" : "text-white"
-                }`}
-              >
-                {item.time}
-              </span>
-              <span className="block text-[#94a3b8] text-[10px]">
-                {item.timezone}
-              </span>
-            </div>
             <div
-              className={`w-12 h-16 rounded overflow-hidden flex-shrink-0 ${
-                item.isAired ? "grayscale opacity-60" : ""
-              }`}
+              className={`w-12 h-16 rounded overflow-hidden flex-shrink-0`}
             >
               <img
                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
@@ -78,20 +69,18 @@ export default function ReleaseSchedule({ scheduleItems }: ReleaseScheduleProps)
             </div>
             <div className="flex flex-col justify-center">
               <h4
-                className={`text-sm font-semibold line-clamp-1 ${
-                  item.isAired
-                    ? "text-[#94a3b8]"
-                    : "text-white group-hover:text-primary"
-                } transition-colors`}
+                className={`text-sm font-semibold line-clamp-2 text-white group-hover:text-primary transition-colors`}
               >
                 {item.title}
               </h4>
-              <span className="text-[#94a3b8] text-xs mt-0.5">
-                {item.isAired ? "Aired" : item.episode}
-              </span>
             </div>
-          </div>
+          </Link>
         ))}
+        {currentDayData.length === 0 && (
+          <div className="text-center text-[#94a3b8] py-8 text-sm">
+             No schedule for this day.
+          </div>
+        )}
       </div>
     </div>
   );

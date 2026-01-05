@@ -9,7 +9,7 @@ export default function Footer() {
             <div className="size-8 bg-primary rounded-lg flex items-center justify-center text-white">
               <span className="material-symbols-outlined">play_arrow</span>
             </div>
-            <h2 className="text-xl font-bold tracking-tight">AnimeKuPlay</h2>
+            <h2 className="text-xl font-bold tracking-tight">AniKuPlay</h2>
           </Link>
           <p className="text-sm text-gray-400 max-w-xs">
             The best place to watch anime online for free. High quality, fast
@@ -19,32 +19,26 @@ export default function Footer() {
         <div className="flex gap-12 text-sm text-gray-400">
           <div className="flex flex-col gap-2">
             <h4 className="text-white font-bold mb-2">Navigation</h4>
-            <Link className="hover:text-primary" href="#">
-              Popular
+            <Link className="hover:text-primary" href="/">
+              Home
             </Link>
-            <Link className="hover:text-primary" href="#">
-              New Releases
+            <Link className="hover:text-primary" href="/AnimeList">
+              Anime List
             </Link>
-            <Link className="hover:text-primary" href="#">
+            <Link className="hover:text-primary" href="/genre">
               Genres
             </Link>
           </div>
           <div className="flex flex-col gap-2">
             <h4 className="text-white font-bold mb-2">Support</h4>
-            <Link className="hover:text-primary" href="#">
-              Help Center
-            </Link>
-            <Link className="hover:text-primary" href="#">
-              Request Anime
-            </Link>
-            <Link className="hover:text-primary" href="#">
-              DMCA
+            <Link className="hover:text-primary" href="https://nyawer.co/AlGhazam">
+              Saweria
             </Link>
           </div>
         </div>
       </div>
       <div className="max-w-[1600px] mx-auto mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-500">
-        © 2026 AnimeKuPlay. All rights reserved. This site does not store any
+        © 2026 AniKuPlay. All rights reserved. This site does not store any
         files on its server.
       </div>
     </footer>
