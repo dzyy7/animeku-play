@@ -313,3 +313,31 @@ export async function getAnimeUnlimited(): Promise<AnimeUnlimitedResponse> {
   }
   return res.json();
 }
+
+export interface GenreListResponse {
+  status: string;
+  statusCode: number;
+  data: {
+    genreList: Genre[];
+  };
+}
+
+export async function getGenres(): Promise<GenreListResponse> {
+  const res = await fetch(`${API_BASE_URL}/anime/genre`, {
+    next: { revalidate: 86400 },
+  });
+  if (!res.ok) {
+    throw new Error("Failed to fetch genres");
+  }
+  return res.json();
+}
+
+export async function getAnimeByGenre(genreId: string, page: number = 1): Promise<AnimeListResponse> {
+  const res = await fetch(`${API_BASE_URL}/anime/genre/${genreId}?page=${page}`, {
+    next: { revalidate: 3600 },
+  });
+  if (!res.ok) {
+    throw new Error(`Failed to fetch anime for genre ${genreId}`);
+  }
+  return res.json();
+}

@@ -13,7 +13,7 @@ export default function AlphabetFilter() {
   const [activeLetter, setActiveLetter] = useState("All");
 
   return (
-    <div className="w-full overflow-hidden">
+    <div className="w-full overflow-hidden ">
       <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar py-2">
         {alphabet.map((letter) => (
           <button

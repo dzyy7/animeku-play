@@ -22,7 +22,7 @@ export default async function AnimeListPage() {
           {/* Header Section */}
           <div className="flex flex-col gap-2">
             <h1 className="text-white text-4xl lg:text-5xl font-black leading-tight tracking-[-0.033em]">
-              Browse Anime Catalog
+              Browse Anime
             </h1>
             <p className="text-text-secondary text-lg font-normal">
               Discover your next favorite series from our extensive library.
