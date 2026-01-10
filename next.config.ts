@@ -8,31 +8,62 @@ const nextConfig: NextConfig = {
         hostname: 'otakudesu.best',
         pathname: '**',
       },
-      // Tambahkan hostname lain jika ada source gambar lain
       {
         protocol: 'https',
-        hostname: '**', // Fallback untuk hostname lain
+        hostname: '**',
       },
     ],
-    // Optimasi gambar untuk SEO & Performance
     formats: ['image/avif', 'image/webp'],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   
-  // Compress untuk performa lebih baik (penting untuk SEO)
   compress: true,
-  
-  // Optimasi production
   poweredByHeader: false,
   reactStrictMode: true,
   
-  // Headers untuk SEO dan security
   async headers() {
     return [
       {
         source: '/:path*',
         headers: [
+          // Security Headers - Mengatasi warning webchecker
+          {
+            key: 'Content-Security-Policy',
+            value: [
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' https://fonts.gstatic.com https://fonts.googleapis.com",
+              "img-src 'self' data: https: http:",
+              "media-src 'self' https: http:",
+              "connect-src 'self' https:",
+              "frame-src 'self'",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+              "upgrade-insecure-requests"
+            ].join('; ')
+          },
+          {
+            key: 'X-XSS-Protection',
+            value: '1; mode=block'
+          },
+          {
+            key: 'Permissions-Policy',
+            value: [
+              'camera=()',
+              'microphone=()',
+              'geolocation=()',
+              'payment=()',
+              'usb=()',
+              'magnetometer=()',
+              'gyroscope=()',
+              'accelerometer=()'
+            ].join(', ')
+          },
+          // Headers existing yang sudah bagus
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
@@ -49,7 +80,10 @@ const nextConfig: NextConfig = {
             key: 'Referrer-Policy',
             value: 'origin-when-cross-origin',
           },
-          // Cache control untuk static assets
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=31536000; includeSubDomains; preload'
+          },
           {
             key: 'Cache-Control',
             value: 'public, max-age=31536000, immutable',
@@ -59,10 +93,8 @@ const nextConfig: NextConfig = {
     ];
   },
   
-  // Redirect www ke non-www (atau sebaliknya, sesuaikan dengan domain Anda)
   async redirects() {
     return [
-      // Redirect www ke non-www
       {
         source: '/:path*',
         has: [
