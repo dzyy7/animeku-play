@@ -41,6 +41,11 @@ export function generateMetadata({
       "anime HD",
       "ongoing anime",
       "completed anime",
+      "streaming anime sub indo",
+      "stream anime sub indo",
+      "nonton anime sub indo",
+      "download anime sub indo",
+      "demon slayer"
     ],
     authors: [{ name: SITE_NAME }],
     creator: SITE_NAME,
